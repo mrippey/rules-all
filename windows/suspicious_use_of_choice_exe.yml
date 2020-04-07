@@ -1,0 +1,32 @@
+title: Abnormal use of choice.exe 
+id: 263f2962-8fd2-417e-9a77-87c8ddb7e9a4
+status: experimental
+description: Detect abnormal use of choice.exe
+references:
+    - https://app.any.run/tasks/4eed74e1-5dd0-4a78-8e92-6a0351adf6e5/
+    - https://malware.news/t/new-agenttesla-keylogger-install-method-choice-exe/31669
+author: Michael R. (@nahamike01)
+date: 2020/03/08
+tags:
+    - attack.execution
+    - attack.t1059
+logsource:
+    product: windows
+    category: process_creation
+detection:
+    selection:
+      - Image|endswith: '\choice.exe'
+      - ParentImage|endswith: 
+        - '\cmd.exe'
+        - '\powershell.exe'
+        CommandLine|contains: 
+          - '/C Y /N /D Y T *'
+          - '& Del *'
+    condition: selection
+fields:
+  - CommandLine
+  - ParentCommandLine
+falsepositives:
+    - Possible. choice.exe is used in the execution of batch files, this command could be used frequently in some environments.
+level: medium
+
